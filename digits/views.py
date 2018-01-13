@@ -8,7 +8,7 @@ import traceback
 import os
 
 import flask
-from flask.ext.socketio import join_room, leave_room
+from flask_socketio import join_room, leave_room
 from werkzeug import HTTP_STATUS_CODES
 import werkzeug.exceptions
 
