@@ -30,3 +30,6 @@ TAGS
 
 #.tb
 .tb/
+
+#jobs
+.digits/jobs/*

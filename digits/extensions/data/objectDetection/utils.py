@@ -5,7 +5,9 @@ import os
 
 import numpy as np
 import PIL.Image
+import cv2
 
+from .cutmerge import merge_bk_image
 
 class ObjectType:
 
@@ -279,8 +281,14 @@ def bbox_overlap(abox, bbox):
 
     return overlap_pix, overlap_box
 
+def adjust_gamma(image, gamma=1.0):
 
-def pad_image(img, padding_image_height, padding_image_width):
+   invGamma = 1.0 / gamma
+   table = np.array([((i / 255.0) ** invGamma) * 255
+      for i in np.arange(0, 256)]).astype("uint8")
+   return cv2.LUT(image, table)
+
+def pad_image(background_img, img, padding_image_height, padding_image_width):
     """
     pad a single image to the specified dimensions
     """
@@ -298,9 +306,14 @@ def pad_image(img, padding_image_height, padding_image_width):
         img.mode,
         (padding_image_width, padding_image_height),
         "black")
-    padded_img.paste(img, (0, 0))  # copy to top-left corner
+    padded_img.paste(background_img, (0, 0))
+    merged_img = merge_bk_image(np.copy(np.asarray(padded_img)),np.copy(np.asarray(img)),True)
+    #adjusted = adjust_gamma(merged_img, gamma=2.5)
+	
+    #padded_img.paste()
+    #padded_img.paste(img, (0, 0))  # copy to top-left corner
 
-    return padded_img
+    return PIL.Image.fromarray(merged_img, 'RGB')
 
 
 def resize_bbox_list(bboxlist, rescale_x=1, rescale_y=1):

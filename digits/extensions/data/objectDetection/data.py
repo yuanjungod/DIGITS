@@ -8,6 +8,7 @@ import random
 import StringIO
 
 import numpy as np
+import random as rd
 
 import digits
 from digits.utils import subclass, override, constants
@@ -42,6 +43,9 @@ class DataIngestion(DataIngestionInterface):
 
         # this will be set when we know the phase we are encoding
         self.ground_truth = None
+        self.rand = 0
+        # this will use to support background
+        self.background = self.make_image_list('/home/ubuntu/Project/background')
 
     @override
     def encode_entry(self, entry):
@@ -49,7 +53,20 @@ class DataIngestion(DataIngestionInterface):
         Return numpy.ndarray
         """
         image_filename = entry
-
+        # (0) background part
+        
+        #random get background
+        self.rand = self.rand % (len(self.background) - 1)
+        background_filename = self.background[self.rand]
+        self.rand = self.rand + 1
+        
+        # load from file (this returns a PIL image)
+        background_img = digits.utils.image.load_image(background_filename)
+        if self.channel_conversion != 'none':
+            if background_img.mode != self.channel_conversion:
+                # convert to different image mode if necessary
+                background_img = background_img.convert(self.channel_conversion)
+        
         # (1) image part
 
         # load from file (this returns a PIL image)
@@ -64,6 +81,7 @@ class DataIngestion(DataIngestionInterface):
         if self.padding_image_width:
             # pad image
             img = pad_image(
+                background_img,
                 img,
                 self.padding_image_height,
                 self.padding_image_width)
