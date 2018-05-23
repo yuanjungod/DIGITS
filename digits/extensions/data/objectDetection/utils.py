@@ -302,19 +302,22 @@ def pad_image(background_img, img, padding_image_height, padding_image_width):
         raise ValueError("Source image height %d is greater than padding height %d" %
                          (src_height, padding_image_height))
 
-    padded_img = PIL.Image.new(
-        img.mode,
-        (padding_image_width, padding_image_height),
-        "black")
-    padded_img.paste(background_img, (0, 0))
-    merged_img = merge_bk_image(np.copy(np.asarray(padded_img)),np.copy(np.asarray(img)),True)
+    #padded_img = PIL.Image.new(
+    #    img.mode,
+    #    (padding_image_width, padding_image_height),
+    #    "black")
+    #print("------------------------------------------------------------------------------")
+    #print(type(img))
+    #print("------------------------------------------------------------------------------")
+    background_img.paste(img,(0,0))
+    #merged_img = merge_bk_image(np.copy(np.asarray(padded_img)),np.copy(np.asarray(img)),True)
     #adjusted = adjust_gamma(merged_img, gamma=2.5)
 	
     #padded_img.paste()
     #padded_img.paste(img, (0, 0))  # copy to top-left corner
-
-    return PIL.Image.fromarray(merged_img, 'RGB')
-
+    
+    #return PIL.Image.fromarray(background_img, 'RGB')
+    return background_img
 
 def resize_bbox_list(bboxlist, rescale_x=1, rescale_y=1):
         # this is expecting x1,y1,w,h:
